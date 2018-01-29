@@ -1,0 +1,31 @@
+{
+  "name": "Grayrify",
+  "description": "Put webpages from selected domains into grayscale",
+  "version": "0.1",
+  "homepage_url": "https://linkedin.com/in/seanschang",
+
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+
+  "options_page": "options.html",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "Grayrify!",
+    "default_popup": "popup.html"
+  },
+
+
+  "content_scripts": [
+   {
+      "matches":    ["https://www.youtube.com/*", 
+                     "https://www.facebook.com/*"],
+      "js": ["gray.js"]
+   }
+  ],
+
+  "manifest_version": 2
+}
