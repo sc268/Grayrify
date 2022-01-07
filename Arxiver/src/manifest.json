@@ -1,0 +1,19 @@
+{
+ "background": {"scripts": ["background.js"]},
+ "browser_action": {
+ "default_icon": "icon-48.png",
+ "default_title": "Arxiver"
+ },
+ "name": "Arxiver",
+ "description": "",
+ "homepage_url": "https://linkedin.com/in/sc268",
+ "icons": {
+     "16": "icon-16.png",
+     "48": "icon-48.png"},
+ "permissions": [
+     "http://arxiv.org/*",
+     "https://arxiv.org//*"
+ ],
+ "version": "0.1",
+ "manifest_version": 2
+}
