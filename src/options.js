@@ -1,57 +1,67 @@
-/*
-  Localization
-*/
-/*
-// Localize all elements with a data-i18n="message_name" attribute
-var localizedElements = document.querySelectorAll('[data-i18n]'), el, message;
-for(var i = 0; i < localizedElements.length; i++) {
-  el = localizedElements[i];
-  message = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
-  
-  // Capitalize first letter if element has attribute data-i18n-caps
-  if(el.hasAttribute('data-i18n-caps')) {
-    message = message.charAt(0).toUpperCase() + message.substr(1);
+
+document.addEventListener('DOMContentLoaded', function () {
+  var blacklistDisplay = document.getElementById('blacklist');
+  var addUrlForm = document.getElementById('add-url-form');
+  var addUrlInput = document.getElementById('add-url-input');
+  var message = document.getElementById('message');
+
+  // Load the existing blacklist from storage and display it
+  chrome.storage.local.get('blacklist', function (result) {
+    var blacklist = result.blacklist || [];
+    updateBlacklistDisplay(blacklist);
+  });
+
+  // Handle form submission to add a URL to the blacklist
+  addUrlForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    var url = addUrlInput.value.trim();
+    if (url) {
+      addUrlInput.value = '';
+      chrome.storage.local.get('blacklist', function (result) {
+        var blacklist = result.blacklist || [];
+        blacklist.push(url);
+        if (!url.includes("www")) {
+          blacklist.push('www.' + url);
+        };
+        chrome.storage.local.set({ blacklist: blacklist }, function () {
+          updateBlacklistDisplay(blacklist);
+          showMessage('URL added to blacklist.');
+        });
+      });
+    }
+  });
+
+  // Add click event listeners to the URL items to remove them from the blacklist
+  blacklistDisplay.addEventListener('click', function (event) {
+    if (event.target.classList.contains('url-item')) {
+      var url = event.target.textContent;
+      chrome.storage.local.get('blacklist', function (result) {
+        var blacklist = result.blacklist || [];
+        blacklist = blacklist.filter(function (item) {
+          return item !== url;
+        });
+        chrome.storage.local.set({ blacklist: blacklist }, function () {
+          updateBlacklistDisplay(blacklist);
+          showMessage('URL removed from blacklist.');
+        });
+      });
+    }
+  });
+
+  // Helper function to update the display of the blacklist
+  function updateBlacklistDisplay(blacklist) {
+    var html = '';
+    for (var i = 0; i < blacklist.length; i++) {
+      html += '<div class="url-item">' + blacklist[i] + '</div>';
+    }
+    blacklistDisplay.innerHTML = html;
   }
-  
-  el.innerHTML = message;
-}
-*/
-/*
-  Form interaction
-*/
 
-var form = document.getElementById('options-form'),
-  siteListEl = document.getElementById('site-list'),
-  saveSuccessfulEl = document.getElementById('save-successful'),
-  background = chrome.extension.getBackgroundPage(),
-  startCallbacks = {}, durationEls = {};
-  
-
-form.onsubmit = function () {
-  console.log("form submitted");
-  var durations = {}, duration, durationStr, durationMatch;
-  
-  for(var key in durationEls) {
-    durationStr = durationEls[key].value;
-      console.log(durationMatch);
-      durations[key] = 60;
+  // Helper function to show a message to the user
+  function showMessage(text) {
+    message.textContent = text;
+    setTimeout(function () {
+      message.textContent = '';
+    }, 2000);
   }
-  
-  console.log(durations);
-  
-  background.setPrefs({
-    siteList:           siteListEl.value.split(/\r?\n/),
-  })
-  saveSuccessfulEl.className = 'show';
-  return false;
-}
-
-siteListEl.onfocus = formAltered;
-
-function formAltered() {
-  saveSuccessfulEl.removeAttribute('class');
-  timeFormatErrorEl.removeAttribute('class');
-}
-
-siteListEl.value = background.PREFS.siteList.join("\n");
-
+});

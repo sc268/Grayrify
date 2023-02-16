@@ -1,19 +1,31 @@
 {
-   "name": "Grayrify",
-   "background": {
-      "scripts": ["background.js"]
-   },
-   "browser_action": {
-      "default_icon": "icon.png",
-      "default_popup": "options.html"
-   },
-   "homepage_url": "http://linkedin.com/in/seanschang",
-   "description": "Grayrify",
-   "permissions": ["tabs", "<all_urls>"],
-   "manifest_version": 2,
-   "version": "0.0.1",
-   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
-   "icons": {
-      "48": "icon.png"
-   }
+    "name": "Grayrify",
+    "version": "2.0.1",
+    "manifest_version": 3,
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+        "default_icon": "icon.png",  
+        "default_popup": "options.html"
+    },
+    "permissions": [
+      "storage",
+      "activeTab"
+    ],
+    "homepage_url": "https://www.linkedin.com/in/sc268/",
+    "description": "Grayrify", 
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ],
+    "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
+    },
+    "icons": {
+        "48": "icon.png"
+     }
 }
